@@ -19,10 +19,12 @@ package com.google.gson;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.gson.internal.bind.EpochSecondsDateTypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Date;
 import org.junit.Test;
 
 public class TypeAdapterTest {
@@ -31,6 +33,14 @@ public class TypeAdapterTest {
     TypeAdapter<String> adapter = assertionErrorAdapter.nullSafe();
 
     assertThat(adapter.toJson(null)).isEqualTo("null");
+    assertThat(adapter.fromJson("null")).isNull();
+  }
+
+  @Test
+  public void testEpochSecondsDateAdapter() throws IOException {
+    TypeAdapter<Date> adapter = new EpochSecondsDateTypeAdapter();
+    assertThat(adapter.fromJson("1700000000")).isEqualTo(new Date(1700000000000L));
+    assertThat(adapter.toJson(new Date(1700000000000L))).isEqualTo("1700000000");
     assertThat(adapter.fromJson("null")).isNull();
   }
 
