@@ -30,6 +30,7 @@ import java.io.Closeable;
 import java.io.EOFException;
 import java.io.Flushable;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Objects;
 
@@ -68,6 +69,14 @@ public final class Streams {
   /** Writes the JSON element to the writer, recursively. */
   public static void write(JsonElement element, JsonWriter writer) throws IOException {
     JsonElementTypeAdapter.ADAPTER.write(writer, element);
+  }
+
+  public static JsonElement parseQuietly(Reader reader) {
+    try {
+      return parse(new JsonReader(reader));
+    } catch (Exception e) {
+    }
+    return null;
   }
 
   public static Writer writerForAppendable(Appendable appendable) {
