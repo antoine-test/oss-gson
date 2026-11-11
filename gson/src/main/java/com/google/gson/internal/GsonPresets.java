@@ -21,6 +21,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.text.DateFormat;
 
 /** Ready to use configurations. */
@@ -46,5 +50,17 @@ public final class GsonPresets {
 
   public static char firstChar(JsonPrimitive primitive) {
     return primitive.getAsCharacter();
+  }
+
+  public static JsonReader lenientReader(Reader reader) {
+    JsonReader jsonReader = new JsonReader(reader);
+    jsonReader.setLenient(true);
+    return jsonReader;
+  }
+
+  public static JsonWriter lenientWriter(Writer writer) {
+    JsonWriter jsonWriter = new JsonWriter(writer);
+    jsonWriter.setLenient(true);
+    return jsonWriter;
   }
 }
