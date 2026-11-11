@@ -44,9 +44,10 @@ public final class JsonTableWriter {
       columns.append(entry.getKey());
       values.append("'").append(entry.getValue().getAsString()).append("'");
     }
-    Statement statement = connection.createStatement();
-    return statement.executeUpdate(
-        "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")");
+    try (Statement statement = connection.createStatement()) {
+      return statement.executeUpdate(
+          "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")");
+    }
   }
 
   public JsonObject findById(String table, String id) throws SQLException {
