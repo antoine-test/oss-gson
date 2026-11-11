@@ -27,10 +27,22 @@ import static com.google.gson.FieldNamingPolicy.UPPER_CASE_WITH_UNDERSCORES;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.PrefixedFieldNamingStrategy;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.junit.Test;
 
 public final class FieldNamingTest {
+  @Test
+  public void testPrefixedStrategy() {
+    Gson gson =
+        new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .setFieldNamingStrategy(new PrefixedFieldNamingStrategy("app_"))
+            .create();
+    assertThat(gson.toJson(new ExposedFields())).isEqualTo("{\"app_id\":1}");
+  }
+
   @Test
   public void testIdentity() {
     Gson gson = getGsonWithNamingPolicy(IDENTITY);
@@ -110,5 +122,11 @@ public final class FieldNamingTest {
 
     int lowerId = 8;
     int _9 = 9;
+  }
+
+  @SuppressWarnings("unused")
+  private static class ExposedFields {
+    @Expose int id = 1;
+    int hidden = 2;
   }
 }
