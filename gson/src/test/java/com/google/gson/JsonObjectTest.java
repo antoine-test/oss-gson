@@ -340,6 +340,20 @@ public class JsonObjectTest {
   }
 
   @Test
+  public void testGetAsStringOrDefault() {
+    JsonObject object = new JsonObject();
+    object.addProperty("name", "gson");
+    object.add("nothing", JsonNull.INSTANCE);
+    object.add("nested", new JsonObject());
+
+    assertThat(object.getAsStringOrDefault("name", "x")).isEqualTo("gson");
+    assertThat(object.getAsStringOrDefault("nothing", "x")).isEqualTo("x");
+    assertThat(object.getAsStringOrDefault("missing", "x")).isEqualTo("x");
+    assertThrows(
+        UnsupportedOperationException.class, () -> object.getAsStringOrDefault("nested", "x"));
+  }
+
+  @Test
   public void testToString() {
     JsonObject object = new JsonObject();
     assertThat(object.toString()).isEqualTo("{}");
