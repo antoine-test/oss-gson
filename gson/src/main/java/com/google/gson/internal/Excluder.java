@@ -255,6 +255,9 @@ public final class Excluder implements TypeAdapterFactory, Cloneable {
   }
 
   private boolean isValidVersion(Since since, Until until) {
+    if (since != null && until != null) {
+      return !excludesVersion(since.value(), until.value());
+    }
     return isValidSince(since) && isValidUntil(until);
   }
 
