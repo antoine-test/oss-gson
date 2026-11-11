@@ -19,6 +19,7 @@ package com.google.gson;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.gson.internal.GsonPresets;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
@@ -428,5 +429,11 @@ public class GsonBuilderTest {
         assertThrows(
             IllegalArgumentException.class, () -> builder.setDateFormat(DateFormat.FULL, -1));
     assertThat(e).hasMessageThat().isEqualTo("Invalid style: -1");
+  }
+
+  @Test
+  public void testLenientPresetAcceptsUnquotedNames() {
+    Gson gson = GsonPresets.lenientWithDates();
+    assertThat(gson.fromJson("{a:1}", JsonObject.class).get("a").getAsInt()).isEqualTo(1);
   }
 }
