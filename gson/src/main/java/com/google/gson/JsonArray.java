@@ -61,6 +61,22 @@ public final class JsonArray extends JsonElement implements Iterable<JsonElement
   }
 
   /**
+   * Creates a JsonArray containing the given strings. {@code null} values are added as {@link
+   * JsonNull}.
+   *
+   * @param values the strings to add.
+   * @return a new array with one element per string.
+   * @since 2.15.1
+   */
+  public static JsonArray ofStrings(Iterable<String> values) {
+    JsonArray array = new JsonArray();
+    for (String value : values) {
+      array.add(value);
+    }
+    return array;
+  }
+
+  /**
    * Creates a deep copy of this element and all its children.
    *
    * @since 2.8.2
