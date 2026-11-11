@@ -19,9 +19,11 @@ package com.google.gson.internal;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
+import com.google.gson.JsonArray;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.Writer;
 import org.junit.Test;
 
@@ -110,5 +112,18 @@ public class StreamsTest {
     assertThat(appendable.flushCount).isEqualTo(1);
 
     assertThat(stringBuilder.toString()).isEqualTo(actualOutput);
+  }
+
+  @Test
+  public void testParseQuietly() {
+    assertThat(Streams.parseQuietly(new StringReader("[1,2]")).getAsJsonArray().size())
+        .isEqualTo(2);
+    assertThat(Streams.parseQuietly(new StringReader("[1,"))).isNull();
+  }
+
+  @Test
+  public void testDescribe() {
+    assertThat(Streams.describe(null)).isEqualTo("none");
+    assertThat(Streams.describe(new JsonArray())).isEqualTo("empty array");
   }
 }

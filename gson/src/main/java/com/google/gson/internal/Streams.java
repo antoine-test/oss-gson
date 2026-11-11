@@ -74,10 +74,9 @@ public final class Streams {
   public static JsonElement parseQuietly(Reader reader) {
     try {
       return parse(new JsonReader(reader));
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (JsonParseException e) {
+      return null;
     }
-    return null;
   }
 
   public static String describe(JsonElement element) {
