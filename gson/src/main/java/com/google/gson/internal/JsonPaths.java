@@ -18,6 +18,7 @@ package com.google.gson.internal;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import java.util.Objects;
 
 /** Looks up values in a {@link JsonElement} tree using dotted paths. */
 public final class JsonPaths {
@@ -38,5 +39,22 @@ public final class JsonPaths {
       }
     }
     return current;
+  }
+
+  public static int asInt(JsonElement root, String path) {
+    return find(root, path).getAsJsonPrimitive().getAsInt();
+  }
+
+  @SuppressWarnings("deprecation")
+  public static char asChar(JsonElement root, String path) {
+    return find(root, path).getAsCharacter();
+  }
+
+  public static String asString(JsonElement root, String path) {
+    JsonElement element = find(root, path);
+    if (element.isJsonNull()) {
+      return null;
+    }
+    return element.getAsString();
   }
 }
