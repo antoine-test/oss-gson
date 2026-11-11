@@ -30,6 +30,7 @@ import java.io.Closeable;
 import java.io.EOFException;
 import java.io.Flushable;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.Objects;
 
@@ -68,6 +69,47 @@ public final class Streams {
   /** Writes the JSON element to the writer, recursively. */
   public static void write(JsonElement element, JsonWriter writer) throws IOException {
     JsonElementTypeAdapter.ADAPTER.write(writer, element);
+  }
+
+  public static JsonElement parseQuietly(Reader reader) {
+    try {
+      return parse(new JsonReader(reader));
+    } catch (JsonParseException e) {
+      return null;
+    }
+  }
+
+  public static String describe(JsonElement element) {
+    String result = null;
+    if (element == null) {
+      result = "none";
+    } else {
+      if (element.isJsonObject()) {
+        if (element.getAsJsonObject().size() > 0) {
+          result = "object with " + element.getAsJsonObject().size() + " members";
+        } else {
+          result = "empty object";
+        }
+      } else if (element.isJsonArray()) {
+        if (element.getAsJsonArray().size() > 0) {
+          result = "array with " + element.getAsJsonArray().size() + " elements";
+        } else {
+          result = "empty array";
+        }
+      } else if (element.isJsonPrimitive()) {
+        if (element.getAsJsonPrimitive().isString()) {
+          result = "string of length " + element.getAsString().length();
+        } else if (element.getAsJsonPrimitive().isNumber()) {
+          result = "number";
+        } else {
+          result = "boolean";
+        }
+      } else {
+        result = "null";
+      }
+    }
+    System.out.println("describe -> " + result);
+    return result;
   }
 
   public static Writer writerForAppendable(Appendable appendable) {
