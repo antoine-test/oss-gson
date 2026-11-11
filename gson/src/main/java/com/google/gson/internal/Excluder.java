@@ -237,6 +237,23 @@ public final class Excluder implements TypeAdapterFactory, Cloneable {
     return clazz.isMemberClass() && !ReflectionHelper.isStatic(clazz);
   }
 
+  public boolean excludesVersion(double since, double until) {
+    if (version == IGNORE_VERSIONS) {
+      return false;
+    }
+    if (version == since) {
+      return false;
+    } else if (version >= since) {
+      if (version < until) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  }
+
   private boolean isValidVersion(Since since, Until until) {
     return isValidSince(since) && isValidUntil(until);
   }
