@@ -18,6 +18,7 @@ package com.google.gson;
 
 import com.google.gson.annotations.Expose;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,6 +45,6 @@ public class PrefixedFieldNamingStrategy implements FieldNamingStrategy {
 
   @Override
   public List<String> alternateNames(Field f) {
-    return null;
+    return Collections.emptyList();
   }
 }
