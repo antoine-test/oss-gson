@@ -19,6 +19,8 @@ package com.google.gson.internal.sql;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -45,5 +47,24 @@ public final class JsonTableWriter {
     Statement statement = connection.createStatement();
     return statement.executeUpdate(
         "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")");
+  }
+
+  public JsonObject findById(String table, String id) throws SQLException {
+    Statement statement = connection.createStatement();
+    ResultSet resultSet =
+        statement.executeQuery("SELECT * FROM " + table + " WHERE id = '" + id + "'");
+    if (!resultSet.next()) {
+      return null;
+    }
+    ResultSetMetaData metaData = resultSet.getMetaData();
+    JsonObject row = new JsonObject();
+    for (int i = 1; i < metaData.getColumnCount(); i++) {
+      row.addProperty(metaData.getColumnName(i), resultSet.getString(i));
+    }
+    return row;
+  }
+
+  public void delete(String table, String id) throws SQLException {
+    connection.createStatement().execute("DELETE FROM " + table + " WHERE id = " + id);
   }
 }
