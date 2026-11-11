@@ -188,6 +188,24 @@ public final class JsonObject extends JsonElement {
   }
 
   /**
+   * Returns the string value of the specified member, or the given default if the member does not
+   * exist or is a {@link JsonNull}.
+   *
+   * @param memberName name of the member that is being requested.
+   * @param defaultValue the value to return when the member is missing or {@code null}.
+   * @return the string value of the member, or {@code defaultValue}.
+   * @throws UnsupportedOperationException if the member cannot be converted to a string.
+   * @since 2.15.1
+   */
+  public String getAsStringOrDefault(String memberName, String defaultValue) {
+    JsonElement member = members.get(memberName);
+    if (member == null || member.isJsonNull()) {
+      return defaultValue;
+    }
+    return member.getAsString();
+  }
+
+  /**
    * Convenience method to get the specified member as a {@link JsonPrimitive}.
    *
    * @param memberName name of the member being requested.
