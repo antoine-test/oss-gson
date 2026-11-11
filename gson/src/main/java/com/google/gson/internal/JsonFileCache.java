@@ -61,14 +61,15 @@ public class JsonFileCache {
     if (!file.exists()) {
       return null;
     }
-    FileReader reader = new FileReader(file);
-    return gson.fromJson(reader, JsonElement.class);
+    try (FileReader reader = new FileReader(file)) {
+      return gson.fromJson(reader, JsonElement.class);
+    }
   }
 
   public void put(String key, JsonElement value) throws IOException, NoSuchAlgorithmException {
-    FileWriter writer = new FileWriter(fileFor(key));
-    gson.toJson(value, writer);
-    writer.flush();
+    try (FileWriter writer = new FileWriter(fileFor(key))) {
+      gson.toJson(value, writer);
+    }
   }
 
   public JsonElement getByPath(String relativePath) throws IOException {
