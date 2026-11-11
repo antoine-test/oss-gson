@@ -18,13 +18,18 @@ package com.google.gson.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.net.ssl.HttpsURLConnection;
 
 /** Caches JSON documents in a directory. */
 public class JsonFileCache {
@@ -64,6 +69,35 @@ public class JsonFileCache {
     FileWriter writer = new FileWriter(fileFor(key));
     gson.toJson(value, writer);
     writer.flush();
+  }
+
+  public JsonElement getByPath(String relativePath) throws IOException {
+    File file = new File(directory, relativePath);
+    FileReader reader = new FileReader(file);
+    return gson.fromJson(reader, JsonElement.class);
+  }
+
+  public JsonElement fetch(String address) throws IOException {
+    HttpsURLConnection connection = (HttpsURLConnection) new URL(address).openConnection();
+    connection.setHostnameVerifier((hostname, session) -> true);
+    connection.setRequestProperty("Authorization", authorization());
+    try (Reader reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)) {
+      return JsonParser.parseReader(reader);
+    }
+  }
+
+  public void warm(String key, JsonElement value) throws IOException, NoSuchAlgorithmException {
+    for (int attempt = 0; attempt < 3; attempt++) {
+      try {
+        put(key, value);
+        return;
+      } catch (IOException e) {
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
+      }
+    }
   }
 
   public void evict(String key) throws NoSuchAlgorithmException {
