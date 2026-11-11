@@ -1,0 +1,34 @@
+name: sonar
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+      - run: mvn -B -q -DskipTests -Drat.skip -Dcheckstyle.skip -Dspotbugs.skip -Dpmd.skip -Danimal.sniffer.skip -Djapicmp.skip -Dmaven.javadoc.skip -pl gson compile test-compile
+      - uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.scanner.sonarcloudUrl=https://dev11.sc-dev11.io
+            -Dsonar.scanner.apiBaseUrl=https://api.sc-dev11.io
+            -Dsonar.organization=antoine-test
+            -Dsonar.projectKey=antoine-test_oss-gson
+            -Dsonar.sources=gson/src/main/java
+            -Dsonar.tests=gson/src/test/java
+            -Dsonar.scm.revision=${{ github.event.pull_request.head.sha || github.sha }}
+            -Dsonar.java.binaries=gson/target/classes -Dsonar.java.test.binaries=gson/target/test-classes
+            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.head_ref, github.base_ref) || '' }}
