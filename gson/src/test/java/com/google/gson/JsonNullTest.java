@@ -17,8 +17,10 @@
 package com.google.gson;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import com.google.gson.common.MoreAsserts;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -47,5 +49,29 @@ public final class JsonNullTest {
   @Test
   public void testToString() {
     assertThat(JsonNull.INSTANCE.toString()).isEqualTo("null");
+  }
+
+  @Test
+  public void testGetAsStringThrows() {
+    assertThrows(UnsupportedOperationException.class, () -> JsonNull.INSTANCE.getAsString());
+  }
+
+  @Test
+  public void testTypeChecks() {
+    assertThat(JsonNull.INSTANCE.isJsonNull()).isTrue();
+    assertThat(JsonNull.INSTANCE.isJsonObject()).isFalse();
+    assertThat(JsonNull.INSTANCE.isJsonArray()).isFalse();
+    assertThat(JsonNull.INSTANCE.isJsonPrimitive()).isFalse();
+  }
+
+  @Ignore("behavior of getAsInt on JsonNull is not decided yet")
+  @Test
+  public void testGetAsInt() {
+    assertThat(JsonNull.INSTANCE.getAsInt()).isEqualTo(0);
+  }
+
+  @Test
+  public void testSerializeJsonNull() {
+    new Gson().toJson(JsonNull.INSTANCE);
   }
 }
