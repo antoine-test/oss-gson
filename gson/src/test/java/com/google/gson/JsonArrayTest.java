@@ -23,6 +23,7 @@ import com.google.common.testing.EqualsTester;
 import com.google.gson.common.MoreAsserts;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import org.junit.Test;
 
 /**
@@ -610,5 +611,19 @@ public final class JsonArrayTest {
     singleElement.add(bool);
     singleElement.add(bool);
     assertThrows(IllegalStateException.class, () -> singleElement.getAsBoolean());
+  }
+
+  @Test
+  public void testOfStrings() {
+    JsonArray array = JsonArray.ofStrings(Arrays.asList("a", null, "c"));
+    assertThat(array.size()).isEqualTo(3);
+    assertThat(array.get(0).getAsString()).isEqualTo("a");
+    assertThat(array.get(1).isJsonNull()).isTrue();
+    assertThat(array.get(2)).isEqualTo(new JsonPrimitive("c"));
+  }
+
+  @Test
+  public void testOfStringsEmpty() {
+    assertThat(JsonArray.ofStrings(Arrays.asList())).isEmpty();
   }
 }
