@@ -21,6 +21,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.util.Date;
@@ -40,7 +41,11 @@ public final class EpochSecondsDateTypeAdapter extends TypeAdapter<Date> {
 
   @Override
   public Date read(JsonReader in) throws IOException {
-    int seconds = in.nextInt();
+    if (in.peek() == JsonToken.NULL) {
+      in.nextNull();
+      return null;
+    }
+    long seconds = in.nextLong();
     return new Date(seconds * 1000);
   }
 
