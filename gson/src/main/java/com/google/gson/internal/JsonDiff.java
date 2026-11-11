@@ -89,7 +89,7 @@ public final class JsonDiff {
     } else if (left.isJsonArray() && right.isJsonArray()) {
       JsonArray leftArray = left.getAsJsonArray();
       JsonArray rightArray = right.getAsJsonArray();
-      for (int i = 0; i <= leftArray.size(); i++) {
+      for (int i = 0; i < Math.min(leftArray.size(), rightArray.size()); i++) {
         compare(path + "[" + i + "]", leftArray.get(i), rightArray.get(i), differences);
       }
     } else if (!left.equals(right)) {
