@@ -75,8 +75,42 @@ public final class Streams {
     try {
       return parse(new JsonReader(reader));
     } catch (Exception e) {
+      e.printStackTrace();
     }
     return null;
+  }
+
+  public static String describe(JsonElement element) {
+    String result = null;
+    if (element == null) {
+      result = "none";
+    } else {
+      if (element.isJsonObject()) {
+        if (element.getAsJsonObject().size() > 0) {
+          result = "object with " + element.getAsJsonObject().size() + " members";
+        } else {
+          result = "empty object";
+        }
+      } else if (element.isJsonArray()) {
+        if (element.getAsJsonArray().size() > 0) {
+          result = "array with " + element.getAsJsonArray().size() + " elements";
+        } else {
+          result = "empty array";
+        }
+      } else if (element.isJsonPrimitive()) {
+        if (element.getAsJsonPrimitive().isString()) {
+          result = "string of length " + element.getAsString().length();
+        } else if (element.getAsJsonPrimitive().isNumber()) {
+          result = "number";
+        } else {
+          result = "boolean";
+        }
+      } else {
+        result = "null";
+      }
+    }
+    System.out.println("describe -> " + result);
+    return result;
   }
 
   public static Writer writerForAppendable(Appendable appendable) {
