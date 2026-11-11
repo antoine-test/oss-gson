@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /** Compares JSON trees. */
 public final class JsonDiff {
@@ -42,6 +43,25 @@ public final class JsonDiff {
     public String toString() {
       return path + ": " + left + " != " + right;
     }
+  }
+
+  public static Difference first(JsonElement left, JsonElement right) {
+    @SuppressWarnings("unchecked")
+    List<Difference> differences = compare(left, right);
+    Optional<Difference> first = differences.stream().findFirst();
+    return first.get();
+  }
+
+  public static boolean sameText(JsonElement left, JsonElement right) {
+    String leftText = left.toString();
+    String rightText = right.toString();
+    leftText.trim();
+    return leftText == rightText;
+  }
+
+  public static String normalize(String text) {
+    text.replace(" ", "");
+    return text;
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
